@@ -1,23 +1,21 @@
 if (!Caman && typeof exports == "object") {
-
   var Caman = {manip:{}};
   exports.plugins = Caman.manip;
 }
 
 (function (Caman) {
 
-Caman.manip.posterize = function(adjust) {
-  //adjust must be [2...255]
-  console.log("Posterizing with "+adjust+" levels");
+//adjust must be [2...255]
+// works best with smaller input values
+Caman.manip.posterize = function (adjust) {
   var numOfAreas = 256 / adjust;
-  var numOfValues = 255 / (adjust-1);
-  return this.process( adjust, function posterizing(adjust, rgba) {
-      var newR = Math.floor(Math.floor( rgba.r / numOfAreas ) * numOfValues);
-      var newG = Math.floor(Math.floor( rgba.g / numOfAreas ) * numOfValues);
-      var newB = Math.floor(Math.floor( rgba.b / numOfAreas ) * numOfValues);
-      rgba.r = newR;
-      rgba.g = newG;
-      rgba.b = newB;
+  var numOfValues = 255 / (adjust - 1);
+  
+  return this.process( [numOfAreas, numOfValues], function posterize (adjust, rgba) {
+    rgba.r = Math.floor(Math.floor( rgba.r / adjust[0] ) * adjust[1]);
+    rgba.g = Math.floor(Math.floor( rgba.g / adjust[0] ) * adjust[1]);
+    rgba.b = Math.floor(Math.floor( rgba.b / adjust[0] ) * adjust[1]);
+
     return rgba;
   });
 };
